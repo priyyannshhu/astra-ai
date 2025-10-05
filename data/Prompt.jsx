@@ -6,7 +6,9 @@ export default{
   GUIDELINES:
   - Tell user what your are building
   - response less than 15 lines. 
-  - Skip code examples and commentary'
+  - Skip code examples and commentary
+  - Do not use step numbers, asterisks (*), bullet points, or other decorative signs in the response.'
+
 `,
 
 CODE_GEN_PROMPT:dedent`

@@ -55,7 +55,7 @@ const SignInDialog = ({ openDialog, closeDialog }) => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle></DialogTitle>
-          <DialogDescription>
+          <DialogDescription suppressHydrationWarning>
             <div className="flex flex-col justify-center gap-3">
               <h2 className="font-bold text-2xl text-center text-white">
                 {Lookup.SIGNIN_HEADING}
