@@ -130,7 +130,7 @@ function ChatView() {
                     <Bot className="h-5 w-5 text-white" />
                   </div>
                   <div className="flex-1 prose prose-invert prose-sm max-w-none">
-                    <div className="font-semibold text-purple-600 mb-1 not-prose">AI</div>
+                    <div className="font-semibold text-purple-600 mb-1 not-prose">Astra AI</div>
                     <ReactMarkdown
                       components={{
                         p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
