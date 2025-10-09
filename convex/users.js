@@ -44,16 +44,16 @@ export const GetUser = query({ // Change from mutation to query
 });
 
 
-// export const UpdateToken = mutation({
-//   args: {
-//     userId: v.id("users"),
-//     token: v.number(),
-//   },
-//   handler: async (ctx, args) => {
-//     const result = await ctx.db.patch(args.userId, {
-//       token: args.token,
-//     });
-//     console.log(result);
-//     return result;
-//   },
-// });
+export const UpdateToken = mutation({
+  args: {
+    userId: v.id("users"),
+    token: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const result = await ctx.db.patch(args.userId, {
+      token: args.token,
+    });
+    console.log(result);
+    return result;
+  },
+});
