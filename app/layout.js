@@ -4,7 +4,12 @@ import Provider from "./provider";
 
 import { Poppins, Urbanist } from "next/font/google";
 import ConvexClientProvider from "./ConvexClientProvider";
+import { Press_Start_2P } from 'next/font/google';
 
+const pressStart2P = Press_Start_2P({ 
+  weight: '400',
+  subsets: ['latin'] 
+});
 // Import Poppins font
 export const poppins = Poppins({
   subsets: ["latin"],

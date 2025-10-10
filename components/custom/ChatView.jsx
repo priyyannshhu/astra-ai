@@ -12,6 +12,7 @@ import Lookup from "@/data/Lookup";
 import Prompt from "@/data/Prompt";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
+// import { useSidebar } from "@/components/ui/sidebar";
 
 function ChatView() {
   const { id } = useParams();
@@ -21,6 +22,7 @@ function ChatView() {
   const [userInput, setUserInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  // const { toggleSidebar } = useSidebar();
 
   const GetWorkspaceData = async () => {
     const result = await convex.query(api.workspace.GetWorkspaceData, {
@@ -85,7 +87,7 @@ function ChatView() {
     <div className="relative h-[85vh] flex flex-col">
       {/* Messages Container with Custom Scrollbar */}
       <div 
-        className="flex-1 overflow-y-auto pr-4 scrollbar-hide"
+        className="flex-1 overflow-y-scroll px-4 scrollbar-hide"
       >
         <style jsx>{`
           .scrollbar-hide {
@@ -196,6 +198,7 @@ function ChatView() {
       </div>
       
       {/* Input Section */}
+
       <div
         className="p-5 border rounded-xl max-w-xl w-full mt-3"
         style={{ backgroundColor: Colors.BACKGROUND }}
@@ -229,8 +232,8 @@ function ChatView() {
         <div>
           <Link className="h-5 w-5" />
         </div>
-      </div>
-    </div>
+      </div> </div>
+
   );
 }
 

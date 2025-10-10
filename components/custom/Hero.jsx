@@ -9,9 +9,10 @@ import SignInDialog from "@/components/custom/SignInDialog";
 import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import { api } from "@/convex/_generated/api";
+import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 
 function Hero() {
-  const [userInput, setUserInput] = useState();
+  const [userInput, setUserInput] = useState("");
   const { messages, setMessages } = useContext(MessagesContext);
   const { userDetail, setUserDetail } = useContext(UserDetailContext);
   const [openDialog, setOpenDialog] = useState(false);
@@ -25,10 +26,13 @@ function Hero() {
   }, [userDetail]);
 
   const onGenerate = async (input) => {
+    if (!input?.trim()) return;
+    
     console.log("onGenerate called with userDetail:", userDetail);
     
     const msg = { role: "user", content: input };
-    setMessages(msg);
+    // FIX: Set messages as an array, not a single object
+    setMessages([msg]);
 
     // Check if userDetail is loaded and has _id
     if (!userDetail || !userDetail._id) {
@@ -54,26 +58,62 @@ function Hero() {
 
   return (
     <>
+      {/* Background Gradient Animation - positioned fixed behind everything */}
+      <BackgroundGradientAnimation
+        gradientBackgroundStart="rgb(0, 0, 0)"
+        gradientBackgroundEnd="rgb(10, 10, 30)"
+        firstColor="59, 130, 246"
+        secondColor="139, 92, 246"
+        thirdColor="96, 165, 250"
+        fourthColor="147, 51, 234"
+        fifthColor="79, 70, 229"
+        pointerColor="99, 102, 241"
+        size="80%"
+        blendingValue="hard-light"
+        interactive={true}
+        containerClassName="fixed inset-0 -z-10"
+      />
+
+      {/* Hero Content */}
       <div className="flex flex-col items-center mt-36 xl:mt-52 gap-2">
-        <h2 className="font-bold text-4xl">{Lookup.HERO_HEADING}</h2>
-        <p className="text-gray-400 font-medium">{Lookup.HERO_DESC}</p>
+        <h2 className="font-bold text-4xl text-center px-4">
+          Turn your{" "}
+          <span className="font-['Press_Start_2P'] bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-blue-300 animate-gradient">
+            ideas
+          </span>{" "}
+          into{" "}
+          <span className="font-['Press_Start_2P'] bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-blue-500 to-purple-300 animate-gradient">
+            apps
+          </span>{" "}
+          instantly
+        </h2>
+        <p className="text-gray-100 font-medium">{Lookup.HERO_DESC}</p>
 
         <div
-          className="p-5 border rounded-xl max-w-xl w-full mt-3 "
+          className="p-5 border rounded-xl max-w-xl w-full mt-3"
           style={{ backgroundColor: Colors.BACKGROUND }}
         >
           <div className="flex gap-2">
             <textarea
+              value={userInput}
               placeholder={Lookup.INPUT_PLACEHOLDER}
               onChange={(e) => setUserInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  if (userInput?.trim() && !isLoading) {
+                    onGenerate(userInput);
+                  }
+                }
+              }}
               spellCheck={false}
-              className="outline-none bg-transparent w-full h-32 max-h-56 resize-none "
+              className="outline-none bg-transparent w-full h-32 max-h-56 resize-none"
               disabled={isLoading}
             />
             {userInput && (
               <ArrowRight
                 onClick={() => !isLoading && onGenerate(userInput)}
-                className={`bg-blue-500 p-2 h-10 w-10 rounded-md ${
+                className={`bg-blue-500 p-2 h-10 w-10 rounded-md flex-shrink-0 ${
                   isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
                 }`}
               />
@@ -88,17 +128,19 @@ function Hero() {
             <h2
               key={index}
               onClick={() => !isLoading && onGenerate(s)}
-              className="p-1 px-2 border rounded-full text-xs text-gray-400 hover:text-white cursor-pointer"
+              className="p-1 px-2 border rounded-full text-xs text-gray-400 hover:text-white cursor-pointer transition-colors"
             >
               {s}
             </h2>
           ))}
         </div>
       </div>
+
       <SignInDialog
         openDialog={openDialog}
         closeDialog={(v) => setOpenDialog(v)}
       />
+
       {/* Footer */}
       <div className="fixed bottom-0 left-0 right-0 p-4 flex justify-between items-center text-xs text-gray-400">
         <span>© Copyright Astra AI</span>

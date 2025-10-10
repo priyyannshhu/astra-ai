@@ -30,8 +30,8 @@ function Header() {
         <Link href="/" className="flex items-center gap-3 cursor-pointer">
           <Image src="/logo.png" alt="Astra Logo" width={30} height={30} />
           <div className="flex flex-col">
-            <span className="font-semibold">Astra</span>
-            <span className="text-xs font-normal text-gray-400 -mt-1">
+            <span className="font-semibold">Astra AI</span>
+            <span className="text-xs font-normal text-white-400 -mt-1">
               formerly known as MERN AI
             </span>
           </div>
