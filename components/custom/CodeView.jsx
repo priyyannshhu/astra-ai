@@ -4,7 +4,6 @@ import {
   SandpackProvider,
   SandpackLayout,
   SandpackCodeEditor,
-  SandpackPreview,
   SandpackFileExplorer,
 } from "@codesandbox/sandpack-react";
 import Lookup from "@/data/Lookup";
@@ -18,8 +17,7 @@ import { api } from "@/convex/_generated/api";
 import { useParams } from "next/navigation";
 import { useConvex } from "convex/react";
 import { Loader } from "react-feather";
-// import SandPackPreviewClient from "./SandPackPreviewClient";
-// import { ActionContext } from "@/context/ActionContext";
+import SandPackPreviewClient from "./SandPackPreviewClient";
 import { toast } from "sonner";
 
 function CodeView() {
@@ -28,7 +26,9 @@ function CodeView() {
   const [activeTab, setActiveTab] = useState("code");
   const [files, setFiles] = React.useState(Lookup?.DEFAULT_FILE);
   const { messages, setMessages } = useContext(MessagesContext);
+  const { userDetail, setUserDetail } = useContext(UserDetailContext);
   const UpdateFiles = useMutation(api.workspace.UpdateFiles);
+  const UpdateTokens = useMutation(api.users.UpdateTokens);
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
@@ -44,10 +44,6 @@ function CodeView() {
     id && GetFiles();
   }, [id]);
 
-  // React.useEffect(() => {
-  //   setActiveTab("preview");
-  // }, [action]);
-
   const GetFiles = async () => {
     setLoading(true);
     const result = await convex.query(api.workspace.GetWorkspaceData, {
@@ -57,6 +53,11 @@ function CodeView() {
     setFiles(mergedFiles);
     setLoading(false);
   };
+
+  const countToken = (text) => {
+    return Math.ceil(text.length / 4);
+  };
+
   const GenerateAiCode = async () => {
     setLoading(true);
     const PROMPT = JSON.stringify(messages) + " " + Prompt.CODE_GEN_PROMPT;
@@ -134,10 +135,7 @@ function CodeView() {
             </>
           ) : (
             <>
-              <SandpackPreview
-                style={{ height: "80vh" }}
-                showNavigator={true}
-              />
+              <SandPackPreviewClient />
             </>
           )}
         </SandpackLayout>
@@ -145,7 +143,7 @@ function CodeView() {
       {loading && (
         <div className="p-10 bg-gray-900 opacity-80 absolute top-0 rounded-lg w-full h-full flex items-center justify-center">
           <Loader className="animate-spin h-10 w-10 text-white" />
-          <h2 className="text-white">Generating Your Files...</h2>
+          <h2 className="text-white ml-3">Generating Your Files...</h2>
         </div>
       )}
     </div>

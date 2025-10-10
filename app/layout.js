@@ -4,16 +4,16 @@ import Provider from "./provider";
 
 import { Poppins, Urbanist } from "next/font/google";
 import ConvexClientProvider from "./ConvexClientProvider";
-import { Press_Start_2P } from 'next/font/google';
+import { Press_Start_2P } from "next/font/google";
 
-const pressStart2P = Press_Start_2P({ 
-  weight: '400',
-  subsets: ['latin'] 
+const pressStart2P = Press_Start_2P({
+  weight: "400",
+  subsets: ["latin"],
 });
 // Import Poppins font
 export const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["100","200","300","400","500","600","700","800","900"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-poppins",
   display: "swap",
 });
@@ -21,26 +21,28 @@ export const poppins = Poppins({
 // Import Urbanist font
 export const urbanist = Urbanist({
   subsets: ["latin"],
-  weight: ["100","200","300","400","500","600","700","800","900"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-urbanist",
   display: "swap",
 });
-
 
 export const metadata = {
   title: "Astra - AI Website Builder",
   description:
     "Build stunning websites effortlessly with Astra's AI-powered website builder. No coding required.",
-  
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning  className={`${poppins.variable} ${urbanist.variable}`}>
-      <body
-        className="font-sans">
-          <ConvexClientProvider>
-        <Provider>{children}</Provider></ConvexClientProvider>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${poppins.variable} ${urbanist.variable}`}
+    >
+      <body className="font-sans">
+        <ConvexClientProvider>
+          <Provider>{children}</Provider>
+        </ConvexClientProvider>
       </body>
     </html>
   );

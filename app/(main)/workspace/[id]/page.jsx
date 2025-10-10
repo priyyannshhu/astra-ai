@@ -21,7 +21,7 @@ function Workspace() {
         interactive={true}
         containerClassName="fixed inset-0 -z-10"
       />
-      
+
       {/* Workspace Content */}
       <div className="p-3 pr-5 mt-3">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">

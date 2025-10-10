@@ -3,7 +3,7 @@ import React, { useContext, useState, useEffect } from "react";
 import Lookup from "@/data/Lookup";
 import Colors from "@/data/Colors";
 import { MessagesContext } from "@/context/MessagesContext";
-import { ArrowRight, Link } from "lucide-react";
+import { ArrowRight, Link, Loader2 } from "lucide-react";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import SignInDialog from "@/components/custom/SignInDialog";
 import { useMutation } from "convex/react";
@@ -14,9 +14,11 @@ import { BackgroundGradientAnimation } from "@/components/ui/background-gradient
 function Hero() {
   const [userInput, setUserInput] = useState("");
   const { messages, setMessages } = useContext(MessagesContext);
-  const { userDetail, setUserDetail } = useContext(UserDetailContext);
+  const { userDetail, setUserDetail, isLoadingUser } = useContext(UserDetailContext);
   const [openDialog, setOpenDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  
   const CreateWorkspace = useMutation(api.workspace.CreateWorkSpace);
   const router = useRouter();
 
@@ -30,8 +32,13 @@ function Hero() {
     
     console.log("onGenerate called with userDetail:", userDetail);
     
+    // Wait for user initialization to complete
+    if (isLoadingUser) {
+      console.log("Still loading user...");
+      return;
+    }
+    
     const msg = { role: "user", content: input };
-    // FIX: Set messages as an array, not a single object
     setMessages([msg]);
 
     // Check if userDetail is loaded and has _id
@@ -48,16 +55,28 @@ function Hero() {
         messages: [msg],
       });
 
+      // Show navigation loader
+      setIsNavigating(true);
       router.push("/workspace/" + workspaceId);
     } catch (error) {
       console.error("Error creating workspace:", error);
-    } finally {
       setIsLoading(false);
+      setIsNavigating(false);
     }
   };
 
   return (
     <>
+      {/* Navigation Loader Overlay */}
+      {isNavigating && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-12 w-12 text-blue-500 animate-spin" />
+            <p className="text-white text-lg font-medium">Moving to your workspace...</p>
+          </div>
+        </div>
+      )}
+
       {/* Background Gradient Animation - positioned fixed behind everything */}
       <BackgroundGradientAnimation
         gradientBackgroundStart="rgb(0, 0, 0)"
@@ -101,20 +120,20 @@ function Hero() {
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
-                  if (userInput?.trim() && !isLoading) {
+                  if (userInput?.trim() && !isLoading && !isNavigating) {
                     onGenerate(userInput);
                   }
                 }
               }}
               spellCheck={false}
               className="outline-none bg-transparent w-full h-32 max-h-56 resize-none"
-              disabled={isLoading}
+              disabled={isLoading || isNavigating}
             />
             {userInput && (
               <ArrowRight
-                onClick={() => !isLoading && onGenerate(userInput)}
+                onClick={() => !isLoading && !isNavigating && onGenerate(userInput)}
                 className={`bg-blue-500 p-2 h-10 w-10 rounded-md flex-shrink-0 ${
-                  isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                  isLoading || isNavigating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
                 }`}
               />
             )}
@@ -127,7 +146,7 @@ function Hero() {
           {Lookup?.SUGGESTIONS.map((s, index) => (
             <h2
               key={index}
-              onClick={() => !isLoading && onGenerate(s)}
+              onClick={() => !isLoading && !isNavigating && onGenerate(s)}
               className="p-1 px-2 border rounded-full text-xs text-gray-400 hover:text-white cursor-pointer transition-colors"
             >
               {s}

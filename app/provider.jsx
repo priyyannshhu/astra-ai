@@ -17,8 +17,10 @@ const Provider = ({ children }) => {
   const [messages, setMessages] = React.useState();
   const [userDetail, setUserDetail] = React.useState();
   const [action, setAction] = React.useState();
+  const [isLoadingUser, setIsLoadingUser] = React.useState(true); // Add this
+
   const convex = useConvex();
-  const router=useRouter();
+  const router = useRouter();
 
   useEffect(() => {
     IsAuthenticated();
@@ -28,15 +30,18 @@ const Provider = ({ children }) => {
     if (typeof window !== "undefined") {
       const user = JSON.parse(localStorage.getItem("user"));
       //fetch from db
-      if(!user)
-      {
-        router.push('/');
-        return; 
+      if (!user) {
+        setIsLoadingUser(false); // Done loading
+
+        router.push("/");
+        return;
       }
       const result = await convex.query(api.users.GetUser, {
         email: user?.email,
       });
       setUserDetail(result);
+      setIsLoadingUser(false); // Done loading
+
       console.log(result);
     }
   };
@@ -49,22 +54,24 @@ const Provider = ({ children }) => {
         {/* <PayPalScriptProvider
           options={{ "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID }}
         > */}
-          <UserDetailContext.Provider value={{ userDetail, setUserDetail }}>
-            <MessagesContext.Provider value={{ messages, setMessages }}>
-              <ActionContext.Provider value={{ action, setAction }}>
-                <NextThemesProvider
-                  attribute="class"
-                  enableSystem
-                  defaultTheme="dark"
-                  disableTransitionOnChange
-                >
-                  <Header />
+        <UserDetailContext.Provider
+          value={{ userDetail, setUserDetail, isLoadingUser }}
+        >
+          <MessagesContext.Provider value={{ messages, setMessages }}>
+            <ActionContext.Provider value={{ action, setAction }}>
+              <NextThemesProvider
+                attribute="class"
+                enableSystem
+                defaultTheme="dark"
+                disableTransitionOnChange
+              >
+                <Header />
 
-                    {children}
-                </NextThemesProvider>
-              </ActionContext.Provider>
-            </MessagesContext.Provider>
-          </UserDetailContext.Provider>
+                {children}
+              </NextThemesProvider>
+            </ActionContext.Provider>
+          </MessagesContext.Provider>
+        </UserDetailContext.Provider>
         {/* </PayPalScriptProvider> */}
       </GoogleOAuthProvider>
     </div>

@@ -19,7 +19,7 @@ export const CreateWorkSpace = mutation({
       throw new Error("Error creating workspace: " + error.message);
     }
   },
-}); 
+});
 
 export const GetWorkspaceData = query({
   args: {

@@ -30,7 +30,8 @@ export const CreateUser = mutation({
   },
 });
 
-export const GetUser = query({ // Change from mutation to query
+export const GetUser = query({
+  // Change from mutation to query
   args: {
     email: v.string(), // Define email with type
   },
@@ -42,7 +43,6 @@ export const GetUser = query({ // Change from mutation to query
     return user[0];
   },
 });
-
 
 export const UpdateToken = mutation({
   args: {

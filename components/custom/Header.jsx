@@ -3,8 +3,11 @@ import Image from "next/image";
 import React, { useContext, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { UserDetailContext } from "@/context/UserDetailContext";
+import { ActionContext } from "@/context/ActionContext";
 import Link from "next/link";
 import SignInDialog from "@/components/custom/SignInDialog";
+import { Download, Rocket } from "lucide-react";
+import { usePathname } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,11 +19,20 @@ import {
 
 function Header() {
   const { userDetail, setUserDetail } = useContext(UserDetailContext);
+  const { action, setAction } = useContext(ActionContext);
   const [openDialog, setOpenDialog] = useState(false);
+  const path = usePathname();
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUserDetail(null);
+  };
+
+  const onActionBtn = (actionType) => {
+    setAction({
+      actionType: actionType,
+      timeStamp: Date.now(),
+    });
   };
 
   return (
@@ -54,35 +66,68 @@ function Header() {
             </Button>
           </div>
         ) : (
-          /* If logged in → show profile dropdown */
-          <DropdownMenu>
-            <DropdownMenuTrigger className="focus:outline-none">
-              <div className="flex items-center gap-2 cursor-pointer">
-                <Image
-                  src={userDetail?.picture || "/default-avatar.png"}
-                  alt={userDetail?.name}
-                  width={35}
-                  height={35}
-                  className="rounded-full"
-                />
-                <span className="font-xs">{userDetail?.name}</span>
+          <div className="flex items-center gap-3">
+            {/* Export & Deploy buttons - only show on workspace pages */}
+            {path?.includes("workspace") && (
+              <div className="flex gap-3">
+                <Button
+                  variant="ghost"
+                  onClick={() => onActionBtn("export")}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  Export <Download className="w-4 h-4" />
+                </Button>
+                <Button
+                  onClick={() => onActionBtn("deploy")}
+                  className="text-white flex items-center gap-2"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, #3b82f6 0%, #1e40af 100%)",
+                  }}
+                >
+                  Deploy <Rocket className="w-4 h-4" />
+                </Button>
               </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem disabled>{userDetail?.email}</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="text-red-500">
-                Log out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+            )}
+
+            {/* Profile dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="focus:outline-none">
+                <div className="flex items-center gap-2 cursor-pointer">
+                  <Image
+                    src={userDetail?.picture || "/default-avatar.png"}
+                    alt={userDetail?.name}
+                    width={35}
+                    height={35}
+                    className="rounded-full"
+                  />
+                  <span className="font-xs">{userDetail?.name}</span>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem disabled>
+                  {userDetail?.email}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="text-red-500"
+                >
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         )}
       </div>
 
       {/* SignInDialog */}
-      <SignInDialog openDialog={openDialog} closeDialog={(v) => setOpenDialog(v)} />
+      <SignInDialog
+        openDialog={openDialog}
+        closeDialog={(v) => setOpenDialog(v)}
+      />
     </>
   );
 }

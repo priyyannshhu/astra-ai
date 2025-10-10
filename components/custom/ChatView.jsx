@@ -48,17 +48,17 @@ function ChatView() {
   const GetAiResponse = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const PROMPT = JSON.stringify(messages) + Prompt.CHAT_PROMPT;
       console.log("Sending prompt:", PROMPT);
-      
+
       const result = await axios.post("/api/ai-chat", {
         prompt: PROMPT,
       });
-      
+
       console.log("AI Response:", result.data.result);
-      
+
       setMessages((prev) => [
         ...prev,
         { role: "ai", content: result.data.result },
@@ -66,9 +66,12 @@ function ChatView() {
     } catch (err) {
       console.error("Error getting AI response:", err);
       console.error("Error details:", err.response?.data);
-      
-      setError(err.response?.data?.error || "Failed to get AI response. Please try again.");
-      
+
+      setError(
+        err.response?.data?.error ||
+          "Failed to get AI response. Please try again."
+      );
+
       // Remove the last user message if AI fails
       setMessages((prev) => prev.slice(0, -1));
     } finally {
@@ -78,7 +81,7 @@ function ChatView() {
 
   const onGenerate = async (input) => {
     if (!input?.trim()) return;
-    
+
     setMessages((prev) => [...prev, { role: "user", content: input }]);
     setUserInput(""); // Clear input immediately
   };
@@ -86,9 +89,7 @@ function ChatView() {
   return (
     <div className="relative h-[85vh] flex flex-col">
       {/* Messages Container with Custom Scrollbar */}
-      <div 
-        className="flex-1 overflow-y-scroll px-4 scrollbar-hide"
-      >
+      <div className="flex-1 overflow-y-scroll px-4 scrollbar-hide">
         <style jsx>{`
           .scrollbar-hide {
             -ms-overflow-style: none;
@@ -98,7 +99,7 @@ function ChatView() {
             display: none;
           }
         `}</style>
-        
+
         {messages?.map((msg, index) => (
           <div
             key={index}
@@ -109,14 +110,17 @@ function ChatView() {
                 msg?.role === "user" ? "ml-auto" : "mr-auto"
               }`}
               style={{
-                backgroundColor: msg?.role === "user" ? "#3A3A3A" : Colors.CHAT_BACKGROUND,
-                color: "#FFFFFF"
+                backgroundColor:
+                  msg?.role === "user" ? "#3A3A3A" : Colors.CHAT_BACKGROUND,
+                color: "#FFFFFF",
               }}
             >
               {msg?.role === "user" ? (
                 <>
                   <div className="flex-1">
-                    <div className="whitespace-pre-wrap break-words">{msg.content}</div>
+                    <div className="whitespace-pre-wrap break-words">
+                      {msg.content}
+                    </div>
                   </div>
                   <Image
                     src={userDetail?.picture}
@@ -132,24 +136,60 @@ function ChatView() {
                     <Bot className="h-5 w-5 text-white" />
                   </div>
                   <div className="flex-1 prose prose-invert prose-sm max-w-none">
-                    <div className="font-semibold text-purple-600 mb-1 not-prose">Astra AI</div>
+                    <div className="font-semibold text-purple-600 mb-1 not-prose">
+                      Astra AI
+                    </div>
                     <ReactMarkdown
                       components={{
-                        p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                        ul: ({ children }) => <ul className="list-disc ml-4 mb-2 space-y-1">{children}</ul>,
-                        ol: ({ children }) => <ol className="list-decimal ml-4 mb-2 space-y-1">{children}</ol>,
-                        li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-                        code: ({ inline, children }) => 
+                        p: ({ children }) => (
+                          <p className="mb-2 last:mb-0">{children}</p>
+                        ),
+                        ul: ({ children }) => (
+                          <ul className="list-disc ml-4 mb-2 space-y-1">
+                            {children}
+                          </ul>
+                        ),
+                        ol: ({ children }) => (
+                          <ol className="list-decimal ml-4 mb-2 space-y-1">
+                            {children}
+                          </ol>
+                        ),
+                        li: ({ children }) => (
+                          <li className="leading-relaxed">{children}</li>
+                        ),
+                        code: ({ inline, children }) =>
                           inline ? (
-                            <code className="bg-gray-700 px-1.5 py-0.5 rounded text-sm">{children}</code>
+                            <code className="bg-gray-700 px-1.5 py-0.5 rounded text-sm">
+                              {children}
+                            </code>
                           ) : (
-                            <code className="block bg-gray-800 p-3 rounded my-2 overflow-x-auto">{children}</code>
+                            <code className="block bg-gray-800 p-3 rounded my-2 overflow-x-auto">
+                              {children}
+                            </code>
                           ),
-                        strong: ({ children }) => <strong className="font-bold text-white">{children}</strong>,
-                        em: ({ children }) => <em className="italic">{children}</em>,
-                        h1: ({ children }) => <h1 className="text-xl font-bold mb-2 mt-3">{children}</h1>,
-                        h2: ({ children }) => <h2 className="text-lg font-bold mb-2 mt-3">{children}</h2>,
-                        h3: ({ children }) => <h3 className="text-base font-bold mb-2 mt-2">{children}</h3>,
+                        strong: ({ children }) => (
+                          <strong className="font-bold text-white">
+                            {children}
+                          </strong>
+                        ),
+                        em: ({ children }) => (
+                          <em className="italic">{children}</em>
+                        ),
+                        h1: ({ children }) => (
+                          <h1 className="text-xl font-bold mb-2 mt-3">
+                            {children}
+                          </h1>
+                        ),
+                        h2: ({ children }) => (
+                          <h2 className="text-lg font-bold mb-2 mt-3">
+                            {children}
+                          </h2>
+                        ),
+                        h3: ({ children }) => (
+                          <h3 className="text-base font-bold mb-2 mt-2">
+                            {children}
+                          </h3>
+                        ),
                       }}
                     >
                       {msg.content}
@@ -160,7 +200,7 @@ function ChatView() {
             </div>
           </div>
         ))}
-        
+
         {loading && (
           <div className="flex justify-start mb-3">
             <div
@@ -196,9 +236,7 @@ function ChatView() {
           </div>
         )}
       </div>
-      
       {/* Input Section */}
-
       <div
         className="p-5 border rounded-xl max-w-xl w-full mt-3"
         style={{ backgroundColor: Colors.BACKGROUND }}
@@ -232,8 +270,8 @@ function ChatView() {
         <div>
           <Link className="h-5 w-5" />
         </div>
-      </div> </div>
-
+      </div>{" "}
+    </div>
   );
 }
 

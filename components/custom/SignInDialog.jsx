@@ -19,6 +19,36 @@ const SignInDialog = ({ openDialog, closeDialog }) => {
   const { userDetail, setUserDetail } = React.useContext(UserDetailContext);
   const CreateUser = useMutation(api.users.CreateUser);
 
+  // const googleLogin = useGoogleLogin({
+  //   onSuccess: async (tokenResponse) => {
+  //     console.log(tokenResponse);
+  //     const userInfo = await axios.get(
+  //       "https://www.googleapis.com/oauth2/v3/userinfo",
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${tokenResponse.access_token}`, // Updated accessToken to access_token
+  //         },
+  //       }
+  //     );
+  //     console.log(userInfo);
+  //     const user = userInfo.data;
+  //     await CreateUser({
+  //       name: user?.name,
+  //       email: user?.email,
+  //       picture: user?.picture,
+  //       uid: uuidv4(),
+  //     });
+
+  //     if (typeof window !== "undefined") {
+  //       localStorage.setItem("user", JSON.stringify(user));
+  //     }
+
+  //     setUserDetail(userInfo?.data);
+  //     //Save this in db
+  //     closeDialog(false);
+  //   },
+  //   onError: (errorResponse) => console.log(errorResponse),
+  // });
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       console.log(tokenResponse);
@@ -26,25 +56,29 @@ const SignInDialog = ({ openDialog, closeDialog }) => {
         "https://www.googleapis.com/oauth2/v3/userinfo",
         {
           headers: {
-            Authorization: `Bearer ${tokenResponse.access_token}`, // Updated accessToken to access_token
+            Authorization: `Bearer ${tokenResponse.access_token}`,
           },
         }
       );
       console.log(userInfo);
       const user = userInfo.data;
-      await CreateUser({
+
+      // CreateUser returns the user object with _id
+      const createdUser = await CreateUser({
         name: user?.name,
         email: user?.email,
         picture: user?.picture,
         uid: uuidv4(),
       });
 
+      // Save the complete user object with _id
+      const userWithId = { ...user, _id: createdUser };
+
       if (typeof window !== "undefined") {
-        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify(userWithId));
       }
 
-      setUserDetail(userInfo?.data);
-      //Save this in db
+      setUserDetail(userWithId);
       closeDialog(false);
     },
     onError: (errorResponse) => console.log(errorResponse),
