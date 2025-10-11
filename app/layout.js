@@ -27,7 +27,7 @@ export const urbanist = Urbanist({
 });
 
 export const metadata = {
-  title: "Astra - AI Website Builder",
+  title: "Astra AI - AI Website Builder",
   description:
     "Build stunning websites effortlessly with Astra's AI-powered website builder. No coding required.",
 };

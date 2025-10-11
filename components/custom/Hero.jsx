@@ -14,11 +14,12 @@ import { BackgroundGradientAnimation } from "@/components/ui/background-gradient
 function Hero() {
   const [userInput, setUserInput] = useState("");
   const { messages, setMessages } = useContext(MessagesContext);
-  const { userDetail, setUserDetail, isLoadingUser } = useContext(UserDetailContext);
+  const { userDetail, setUserDetail, isLoadingUser } =
+    useContext(UserDetailContext);
   const [openDialog, setOpenDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
-  
+
   const CreateWorkspace = useMutation(api.workspace.CreateWorkSpace);
   const router = useRouter();
 
@@ -29,15 +30,15 @@ function Hero() {
 
   const onGenerate = async (input) => {
     if (!input?.trim()) return;
-    
+
     console.log("onGenerate called with userDetail:", userDetail);
-    
+
     // Wait for user initialization to complete
     if (isLoadingUser) {
       console.log("Still loading user...");
       return;
     }
-    
+
     const msg = { role: "user", content: input };
     setMessages([msg]);
 
@@ -72,21 +73,23 @@ function Hero() {
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-12 w-12 text-blue-500 animate-spin" />
-            <p className="text-white text-lg font-medium">Moving to your workspace...</p>
+            <p className="text-white text-lg font-medium">
+              Moving to your workspace...
+            </p>
           </div>
         </div>
       )}
 
       {/* Background Gradient Animation - positioned fixed behind everything */}
       <BackgroundGradientAnimation
-        gradientBackgroundStart="rgb(0, 0, 0)"
-        gradientBackgroundEnd="rgb(10, 10, 30)"
-        firstColor="59, 130, 246"
-        secondColor="139, 92, 246"
-        thirdColor="96, 165, 250"
-        fourthColor="147, 51, 234"
-        fifthColor="79, 70, 229"
-        pointerColor="99, 102, 241"
+        gradientBackgroundStart="rgb(5, 8, 25)"
+        gradientBackgroundEnd="rgb(10, 15, 40)"
+        firstColor="59, 130, 246" // Blue
+        secondColor="139, 92, 246" // Purple
+        thirdColor="34, 211, 238" // Cyan
+        fourthColor="124, 58, 237" // Violet
+        fifthColor="56, 189, 248" // Sky Blue
+        pointerColor="103, 232, 249" // Bright Cyan
         size="80%"
         blendingValue="hard-light"
         interactive={true}
@@ -97,11 +100,11 @@ function Hero() {
       <div className="flex flex-col items-center mt-36 xl:mt-52 gap-2">
         <h2 className="font-bold text-4xl text-center px-4">
           Turn your{" "}
-          <span className="font-['Press_Start_2P'] bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-blue-300 animate-gradient">
+          <span className="font-['Press_Start_2P'] bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-sky-300 animate-gradient">
             ideas
           </span>{" "}
           into{" "}
-          <span className="font-['Press_Start_2P'] bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-blue-500 to-purple-300 animate-gradient">
+          <span className="font-['Press_Start_2P'] bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-violet-400 to-purple-300 animate-gradient">
             apps
           </span>{" "}
           instantly
@@ -131,9 +134,13 @@ function Hero() {
             />
             {userInput && (
               <ArrowRight
-                onClick={() => !isLoading && !isNavigating && onGenerate(userInput)}
+                onClick={() =>
+                  !isLoading && !isNavigating && onGenerate(userInput)
+                }
                 className={`bg-blue-500 p-2 h-10 w-10 rounded-md flex-shrink-0 ${
-                  isLoading || isNavigating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                  isLoading || isNavigating
+                    ? "opacity-50 cursor-not-allowed"
+                    : "cursor-pointer"
                 }`}
               />
             )}

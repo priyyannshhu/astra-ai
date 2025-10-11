@@ -52,9 +52,6 @@ function Header() {
         {/* If user not logged in → show buttons */}
         {!userDetail?.name ? (
           <div className="flex gap-5">
-            <Button variant="ghost" onClick={() => setOpenDialog(true)}>
-              Sign In
-            </Button>
             <Button
               className="text-white"
               style={{
