@@ -28,7 +28,6 @@ function CodeView() {
   const { messages, setMessages } = useContext(MessagesContext);
   const { userDetail, setUserDetail } = useContext(UserDetailContext);
   const UpdateFiles = useMutation(api.workspace.UpdateFiles);
-  const UpdateTokens = useMutation(api.users.UpdateTokens);
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
@@ -54,9 +53,6 @@ function CodeView() {
     setLoading(false);
   };
 
-  const countToken = (text) => {
-    return Math.ceil(text.length / 4);
-  };
 
   const GenerateAiCode = async () => {
     setLoading(true);
@@ -74,13 +70,7 @@ function CodeView() {
         workspaceId: id,
         files: aiResp?.files,
       });
-      const token =
-        Number(userDetail?.token) - Number(countToken(JSON.stringify(aiResp)));
-      await UpdateTokens({
-        userId: userDetail?._id,
-        token: token,
-      });
-      setUserDetail((prev) => ({ ...prev, token: token }));
+
     } catch (error) {
       console.error("Error in GenerateAiCode:", error);
       toast.error("Failed to generate AI code. Please try again later.");

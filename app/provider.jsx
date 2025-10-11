@@ -7,17 +7,13 @@ import { UserDetailContext } from "@/context/UserDetailContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
-// import { SidebarProvider } from "@/components/ui/sidebar";
-// import AppSidebar from "@/components/custom/AppSidebar";
-// import { PayPalScriptProvider } from "@paypal/react-paypal-js";
-import { ActionContext } from "@/context/ActionContext";
+import { ActionProvider } from "@/context/ActionContext";
 import { useRouter } from "next/navigation";
 
 const Provider = ({ children }) => {
   const [messages, setMessages] = React.useState();
   const [userDetail, setUserDetail] = React.useState();
-  const [action, setAction] = React.useState();
-  const [isLoadingUser, setIsLoadingUser] = React.useState(true); // Add this
+  const [isLoadingUser, setIsLoadingUser] = React.useState(true);
 
   const convex = useConvex();
   const router = useRouter();
@@ -29,10 +25,8 @@ const Provider = ({ children }) => {
   const IsAuthenticated = async () => {
     if (typeof window !== "undefined") {
       const user = JSON.parse(localStorage.getItem("user"));
-      //fetch from db
       if (!user) {
-        setIsLoadingUser(false); // Done loading
-
+        setIsLoadingUser(false);
         router.push("/");
         return;
       }
@@ -40,8 +34,7 @@ const Provider = ({ children }) => {
         email: user?.email,
       });
       setUserDetail(result);
-      setIsLoadingUser(false); // Done loading
-
+      setIsLoadingUser(false);
       console.log(result);
     }
   };
@@ -51,14 +44,11 @@ const Provider = ({ children }) => {
       <GoogleOAuthProvider
         clientId={process.env.NEXT_PUBLIC_GOOGLE_AUTH_CLIENT_ID_KEY}
       >
-        {/* <PayPalScriptProvider
-          options={{ "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID }}
-        > */}
         <UserDetailContext.Provider
           value={{ userDetail, setUserDetail, isLoadingUser }}
         >
           <MessagesContext.Provider value={{ messages, setMessages }}>
-            <ActionContext.Provider value={{ action, setAction }}>
+            <ActionProvider>
               <NextThemesProvider
                 attribute="class"
                 enableSystem
@@ -66,13 +56,11 @@ const Provider = ({ children }) => {
                 disableTransitionOnChange
               >
                 <Header />
-
                 {children}
               </NextThemesProvider>
-            </ActionContext.Provider>
+            </ActionProvider>
           </MessagesContext.Provider>
         </UserDetailContext.Provider>
-        {/* </PayPalScriptProvider> */}
       </GoogleOAuthProvider>
     </div>
   );

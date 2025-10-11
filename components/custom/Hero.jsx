@@ -1,21 +1,40 @@
 "use client";
 import React, { useContext, useState, useEffect } from "react";
-import Lookup from "@/data/Lookup";
-import Colors from "@/data/Colors";
+import { useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { MessagesContext } from "@/context/MessagesContext";
-import { ArrowRight, Link, Loader2 } from "lucide-react";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import SignInDialog from "@/components/custom/SignInDialog";
-import { useMutation } from "convex/react";
-import { useRouter } from "next/navigation";
-import { api } from "@/convex/_generated/api";
 import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
+import Lookup from "@/data/Lookup";
+import Colors from "@/data/Colors";
+import { ArrowRight, Link, Loader2, Clock, Code2 } from "lucide-react";
+
+// Helper function to format relative time
+function formatRelativeTime(timestamp) {
+  const now = Date.now();
+  const diff = now - timestamp;
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30);
+
+  if (seconds < 60) return "just now";
+  if (minutes < 60) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+  if (days < 7) return `${days} day${days > 1 ? "s" : ""} ago`;
+  if (weeks < 4) return `${weeks} week${weeks > 1 ? "s" : ""} ago`;
+  return `${months} month${months > 1 ? "s" : ""} ago`;
+}
 
 function Hero() {
   const [userInput, setUserInput] = useState("");
   const { messages, setMessages } = useContext(MessagesContext);
-  const { userDetail, setUserDetail, isLoadingUser } =
-    useContext(UserDetailContext);
+  const { userDetail, setUserDetail, isLoadingUser } = useContext(UserDetailContext);
   const [openDialog, setOpenDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -23,7 +42,12 @@ function Hero() {
   const CreateWorkspace = useMutation(api.workspace.CreateWorkSpace);
   const router = useRouter();
 
-  // Add useEffect to debug userDetail
+  // Fetch user's previous workspaces
+  const workspaces = useQuery(
+    api.workspace.GetAllWorkspace,
+    userDetail?._id ? { userId: userDetail._id } : "skip"
+  );
+
   useEffect(() => {
     console.log("UserDetail updated:", userDetail);
   }, [userDetail]);
@@ -33,7 +57,6 @@ function Hero() {
 
     console.log("onGenerate called with userDetail:", userDetail);
 
-    // Wait for user initialization to complete
     if (isLoadingUser) {
       console.log("Still loading user...");
       return;
@@ -42,7 +65,6 @@ function Hero() {
     const msg = { role: "user", content: input };
     setMessages([msg]);
 
-    // Check if userDetail is loaded and has _id
     if (!userDetail || !userDetail._id) {
       console.log("User not authenticated, opening dialog");
       setOpenDialog(true);
@@ -56,7 +78,6 @@ function Hero() {
         messages: [msg],
       });
 
-      // Show navigation loader
       setIsNavigating(true);
       router.push("/workspace/" + workspaceId);
     } catch (error) {
@@ -64,6 +85,22 @@ function Hero() {
       setIsLoading(false);
       setIsNavigating(false);
     }
+  };
+
+  const navigateToWorkspace = (workspaceId) => {
+    setIsNavigating(true);
+    router.push("/workspace/" + workspaceId);
+  };
+
+  // Extract first user message from workspace
+  const getWorkspaceTitle = (workspace) => {
+    if (workspace?.messages && workspace.messages.length > 0) {
+      const firstUserMsg = workspace.messages.find(m => m.role === "user");
+      if (firstUserMsg?.content) {
+        return firstUserMsg.content.slice(0, 60) + (firstUserMsg.content.length > 60 ? "..." : "");
+      }
+    }
+    return "Untitled Workspace";
   };
 
   return (
@@ -80,16 +117,16 @@ function Hero() {
         </div>
       )}
 
-      {/* Background Gradient Animation - positioned fixed behind everything */}
+      {/* Background Gradient Animation */}
       <BackgroundGradientAnimation
         gradientBackgroundStart="rgb(5, 8, 25)"
         gradientBackgroundEnd="rgb(10, 15, 40)"
-        firstColor="59, 130, 246" // Blue
-        secondColor="139, 92, 246" // Purple
-        thirdColor="34, 211, 238" // Cyan
-        fourthColor="124, 58, 237" // Violet
-        fifthColor="56, 189, 248" // Sky Blue
-        pointerColor="103, 232, 249" // Bright Cyan
+        firstColor="59, 130, 246"
+        secondColor="139, 92, 246"
+        thirdColor="34, 211, 238"
+        fourthColor="124, 58, 237"
+        fifthColor="56, 189, 248"
+        pointerColor="103, 232, 249"
         size="80%"
         blendingValue="hard-light"
         interactive={true}
@@ -97,8 +134,8 @@ function Hero() {
       />
 
       {/* Hero Content */}
-      <div className="flex flex-col items-center mt-36 xl:mt-52 gap-2">
-        <h2 className="font-bold text-4xl text-center px-4">
+      <div className="flex flex-col items-center mt-24 xl:mt-36 gap-2 px-4">
+        <h2 className="font-bold text-4xl text-center">
           Turn your{" "}
           <span className="font-['Press_Start_2P'] bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-sky-300 animate-gradient">
             ideas
@@ -149,6 +186,7 @@ function Hero() {
             <Link className="h-5 w-5" />
           </div>
         </div>
+
         <div className="flex mt-5 flex-wrap max-w-2xl items-center justify-center gap-3">
           {Lookup?.SUGGESTIONS.map((s, index) => (
             <h2
@@ -160,6 +198,97 @@ function Hero() {
             </h2>
           ))}
         </div>
+
+        {/* Previous Workspaces Section */}
+        {userDetail && workspaces && workspaces.length > 0 && (
+          <div className="w-full max-w-6xl mt-12 mb-20">
+            <div className="flex items-center gap-2 mb-6">
+              <Code2 className="h-6 w-6 text-purple-400" />
+              <h3 className="text-2xl font-bold text-white">
+                Your Recent Projects
+              </h3>
+                {/* { icon: Code2, text: "Recent Projects" }, */}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {workspaces.slice(0, 6).map((workspace) => (
+                <div
+                  key={workspace._id}
+                  onClick={() => navigateToWorkspace(workspace._id)}
+                  className="group relative bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm border border-gray-700 rounded-xl p-4 cursor-pointer hover:border-purple-500 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 overflow-hidden"
+                >
+                  {/* Animated gradient overlay on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-blue-500/0 group-hover:from-purple-500/10 group-hover:to-blue-500/10 transition-all duration-300" />
+                  
+                  <div className="relative z-10">
+                    {/* Preview Section */}
+                    <div className="bg-gray-950/50 rounded-lg p-3 mb-3 h-32 overflow-hidden border border-gray-700/50">
+                      <div className="text-xs text-gray-400 font-mono overflow-y-auto h-full scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+                        {workspace.messages && workspace.messages.length > 0 ? (
+                          workspace.messages.slice(0, 3).map((msg, idx) => (
+                            <div key={idx} className="mb-2">
+                              <span className={msg.role === "user" ? "text-blue-400" : "text-purple-400"}>
+                                {msg.role === "user" ? "You: " : "AI: "}
+                              </span>
+                              <span className="text-gray-300">
+                                {msg.content.slice(0, 80)}
+                                {msg.content.length > 80 ? "..." : ""}
+                              </span>
+                            </div>
+                          ))
+                        ) : (
+                          <span className="text-gray-500">No messages yet</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Workspace Info */}
+                    <div className="space-y-2">
+                      <h4 className="text-white font-semibold truncate group-hover:text-purple-300 transition-colors">
+                        {getWorkspaceTitle(workspace)}
+                      </h4>
+                      
+                      <div className="flex items-center gap-2 text-xs text-gray-400">
+                        <Clock className="h-3 w-3" />
+                        <span>
+                          {formatRelativeTime(workspace._creationTime)}
+                        </span>
+                      </div>
+
+                      {/* Messages count */}
+                      <div className="flex items-center gap-2">
+                        <div className="bg-purple-500/20 text-purple-300 text-xs px-2 py-1 rounded-full">
+                          {workspace.messages?.length || 0} messages
+                        </div>
+                        {workspace.fileData && (
+                          <div className="bg-blue-500/20 text-blue-300 text-xs px-2 py-1 rounded-full">
+                            Has files
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Hover arrow indicator */}
+                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ArrowRight className="h-5 w-5 text-purple-400" />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {workspaces.length > 6 && (
+              <div className="text-center mt-6">
+                <button
+                  onClick={() => router.push("/workspaces")}
+                  className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors"
+                >
+                  View all workspaces →
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <SignInDialog

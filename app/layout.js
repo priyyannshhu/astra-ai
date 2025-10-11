@@ -2,7 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Provider from "./provider";
 
-import { Poppins, Urbanist } from "next/font/google";
+import { Manrope, Urbanist } from "next/font/google";
 import ConvexClientProvider from "./ConvexClientProvider";
 import { Press_Start_2P } from "next/font/google";
 
@@ -10,11 +10,12 @@ const pressStart2P = Press_Start_2P({
   weight: "400",
   subsets: ["latin"],
 });
-// Import Poppins font
-export const poppins = Poppins({
+
+// Import Manrope font
+export const manrope = Manrope({
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  variable: "--font-poppins",
+  weight: ["200", "300", "400", "500", "600", "700", "800"],
+  variable: "--font-manrope",
   display: "swap",
 });
 
@@ -37,7 +38,7 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${poppins.variable} ${urbanist.variable}`}
+      className={`${manrope.variable} ${urbanist.variable}`}
     >
       <body className="font-sans">
         <ConvexClientProvider>
