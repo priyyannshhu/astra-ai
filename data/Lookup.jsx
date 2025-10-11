@@ -2,11 +2,11 @@ import dedent from "dedent";
 
 export default {
 SUGGESTIONS: [
-    "Build a To-Do App in React",
-    "Launch a Budget Tracker",
-    "Create a Gym Management Dashboard",
-    "Design a History Quiz Game",
-    "Set up a Modern Login & Signup Flow"
+    "Create a Smart Recipe Generator using Gemini API",
+    "Build an AI Travel Planner with Chat-style Suggestions",
+    "Design a Personalized Quote & Affirmation Generator",
+    "Develop a Blog Idea & Title Generator using Gemini",
+    "Launch an AI Portfolio Builder with Editable Templates"
   ],
   HERO_HEADING: "Turn your ideas into apps instantly",
   HERO_DESC: "Describe what you need, and Astra AI will design, code, and deploy your full-stack web app in minutes.",
