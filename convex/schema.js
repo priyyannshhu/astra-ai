@@ -1,13 +1,15 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
 
 export default defineSchema({
   users: defineTable({
     name: v.string(),
     email: v.string(),
-    picture: v.string(),
+    username: v.optional(v.union(v.string(), v.null())),
+    picture: v.optional(v.union(v.string(), v.null())),
     uid: v.string(),
+    password: v.optional(v.union(v.string(), v.null())),
+    authMethod: v.optional(v.union(v.literal("google"), v.literal("username"))),
   }),
   workspace: defineTable({
     messages: v.any(),
