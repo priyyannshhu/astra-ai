@@ -43,4 +43,3 @@ export const GetUser = query({
     return user[0];
   },
 });
-

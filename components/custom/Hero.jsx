@@ -10,7 +10,7 @@ import SignInDialog from "@/components/custom/SignInDialog";
 import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 import Lookup from "@/data/Lookup";
 import Colors from "@/data/Colors";
-import { ArrowRight, Link, Loader2, Clock, Code2 } from "lucide-react";
+import { ArrowRight, Link, Loader2, Clock, Code2, Wand2 } from "lucide-react";
 
 // Helper function to format relative time
 function formatRelativeTime(timestamp) {
@@ -33,8 +33,10 @@ function formatRelativeTime(timestamp) {
 
 function Hero() {
   const [userInput, setUserInput] = useState("");
+  const [isEnhancing, setIsEnhancing] = useState(false);
   const { messages, setMessages } = useContext(MessagesContext);
-  const { userDetail, setUserDetail, isLoadingUser } = useContext(UserDetailContext);
+  const { userDetail, setUserDetail, isLoadingUser } =
+    useContext(UserDetailContext);
   const [openDialog, setOpenDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -87,6 +89,30 @@ function Hero() {
     }
   };
 
+  const enhancePrompt = async () => {
+    if (!userInput?.trim()) return;
+
+    setIsEnhancing(true);
+    try {
+      const response = await fetch("/api/enhance-prompt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: userInput }),
+      });
+
+      const data = await response.json();
+      if (data.enhancedPrompt) {
+        setUserInput(data.enhancedPrompt);
+      }
+    } catch (error) {
+      console.error("Error enhancing prompt:", error);
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
+
   const navigateToWorkspace = (workspaceId) => {
     setIsNavigating(true);
     router.push("/workspace/" + workspaceId);
@@ -95,9 +121,12 @@ function Hero() {
   // Extract first user message from workspace
   const getWorkspaceTitle = (workspace) => {
     if (workspace?.messages && workspace.messages.length > 0) {
-      const firstUserMsg = workspace.messages.find(m => m.role === "user");
+      const firstUserMsg = workspace.messages.find((m) => m.role === "user");
       if (firstUserMsg?.content) {
-        return firstUserMsg.content.slice(0, 60) + (firstUserMsg.content.length > 60 ? "..." : "");
+        return (
+          firstUserMsg.content.slice(0, 60) +
+          (firstUserMsg.content.length > 60 ? "..." : "")
+        );
       }
     }
     return "Untitled Workspace";
@@ -160,26 +189,56 @@ function Hero() {
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
-                  if (userInput?.trim() && !isLoading && !isNavigating) {
+                  if (
+                    userInput?.trim() &&
+                    !isLoading &&
+                    !isNavigating &&
+                    !isEnhancing
+                  ) {
                     onGenerate(userInput);
                   }
                 }
               }}
               spellCheck={false}
               className="outline-none bg-transparent w-full h-32 max-h-56 resize-none"
-              disabled={isLoading || isNavigating}
+              disabled={isLoading || isNavigating || isEnhancing}
             />
             {userInput && (
-              <ArrowRight
-                onClick={() =>
-                  !isLoading && !isNavigating && onGenerate(userInput)
-                }
-                className={`bg-blue-500 p-2 h-10 w-10 rounded-md flex-shrink-0 ${
-                  isLoading || isNavigating
-                    ? "opacity-50 cursor-not-allowed"
-                    : "cursor-pointer"
-                }`}
-              />
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={enhancePrompt}
+                  disabled={isEnhancing || isLoading || isNavigating}
+                  className={`p-2 h-10 w-10 rounded-md flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+                    isEnhancing || isLoading || isNavigating
+                      ? "opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
+                  } bg-emerald-500 hover:bg-emerald-600`}
+                  title="Enhance prompt with AI"
+                >
+                  {isEnhancing ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <Wand2 className="h-5 w-5" />
+                  )}
+                </button>
+                <button
+                  onClick={() =>
+                    !isLoading &&
+                    !isNavigating &&
+                    !isEnhancing &&
+                    onGenerate(userInput)
+                  }
+                  disabled={isLoading || isNavigating || isEnhancing}
+                  className={`p-2 h-10 w-10 rounded-md flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+                    isLoading || isNavigating || isEnhancing
+                      ? "opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
+                  } bg-blue-500 hover:bg-blue-600`}
+                  title="Generate workspace"
+                >
+                  <ArrowRight className="h-5 w-5" />
+                </button>
+              </div>
             )}
           </div>
           <div>
@@ -191,7 +250,9 @@ function Hero() {
           {Lookup?.SUGGESTIONS.map((s, index) => (
             <h2
               key={index}
-              onClick={() => !isLoading && !isNavigating && onGenerate(s)}
+              onClick={() =>
+                !isLoading && !isNavigating && !isEnhancing && onGenerate(s)
+              }
               className="p-1 px-2 border rounded-full text-xs text-gray-400 hover:text-white cursor-pointer transition-colors"
             >
               {s}
@@ -207,7 +268,6 @@ function Hero() {
               <h3 className="text-2xl font-bold text-white">
                 Your Recent Projects
               </h3>
-                {/* { icon: Code2, text: "Recent Projects" }, */}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -219,7 +279,7 @@ function Hero() {
                 >
                   {/* Animated gradient overlay on hover */}
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-blue-500/0 group-hover:from-purple-500/10 group-hover:to-blue-500/10 transition-all duration-300" />
-                  
+
                   <div className="relative z-10">
                     {/* Preview Section */}
                     <div className="bg-gray-950/50 rounded-lg p-3 mb-3 h-32 overflow-hidden border border-gray-700/50">
@@ -227,7 +287,13 @@ function Hero() {
                         {workspace.messages && workspace.messages.length > 0 ? (
                           workspace.messages.slice(0, 3).map((msg, idx) => (
                             <div key={idx} className="mb-2">
-                              <span className={msg.role === "user" ? "text-blue-400" : "text-purple-400"}>
+                              <span
+                                className={
+                                  msg.role === "user"
+                                    ? "text-blue-400"
+                                    : "text-purple-400"
+                                }
+                              >
                                 {msg.role === "user" ? "You: " : "AI: "}
                               </span>
                               <span className="text-gray-300">
@@ -247,7 +313,7 @@ function Hero() {
                       <h4 className="text-white font-semibold truncate group-hover:text-purple-300 transition-colors">
                         {getWorkspaceTitle(workspace)}
                       </h4>
-                      
+
                       <div className="flex items-center gap-2 text-xs text-gray-400">
                         <Clock className="h-3 w-3" />
                         <span>

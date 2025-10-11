@@ -55,8 +55,10 @@ export function ActionProvider({ children }) {
     } = payload;
 
     // Get GitHub token from cookies
-    const cookies = document.cookie.split(";").find((c) => c.includes("github_token"));
-    
+    const cookies = document.cookie
+      .split(";")
+      .find((c) => c.includes("github_token"));
+
     if (!cookies) {
       throw new Error(
         "GitHub token not found. Please authenticate with GitHub first."
@@ -67,19 +69,22 @@ export function ActionProvider({ children }) {
 
     try {
       // 1. Create repository on GitHub
-      const createRepoResponse = await fetch("https://api.github.com/user/repos", {
-        method: "POST",
-        headers: {
-          Authorization: `token ${githubToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: repoName,
-          description: "Generated from Astra AI",
-          private: isPrivate,
-          auto_init: true,
-        }),
-      });
+      const createRepoResponse = await fetch(
+        "https://api.github.com/user/repos",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `token ${githubToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: repoName,
+            description: "Generated from Astra AI",
+            private: isPrivate,
+            auto_init: true,
+          }),
+        }
+      );
 
       if (!createRepoResponse.ok) {
         const errorData = await createRepoResponse.json();
