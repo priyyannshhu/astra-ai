@@ -18,6 +18,9 @@ Unlike traditional no-code builders, Astra AI understands **intent**, not just t
 - **Real-time code generation** using Sandpack
 - **Interactive AI chat** for iterative refinement
 - **Full-stack architecture** with file management
+- **AI-powered prompt enhancement** for better results
+- **GitHub integration** for seamless version control
+- **Previous workspace history** for easy project access
 - **Instant deployment** capabilities
 - **Token-based usage** system
 
@@ -29,6 +32,7 @@ Simply describe what you want to build, and Astra AI handles the rest — from c
 
 ### 🧠 **Intelligent Code Generation**
 - **Context-aware AI** that generates React components, HTML/CSS, and JavaScript
+- **AI prompt enhancement** - automatically improve your prompts for better code generation
 - **File structure management** with automatic imports and dependencies
 - **Iterative refinement** through conversational prompts
 - **Multi-file projects** with proper organization
@@ -53,15 +57,27 @@ Simply describe what you want to build, and Astra AI handles the rest — from c
 
 ### 📦 **Workspace Management**
 - **Automatic workspace creation** for each project
+- **Previous workspace history** - access your recent projects instantly
 - **Real-time file synchronization** via Convex
+- **Relative time display** (just now, 2 hours ago, etc.)
+- **Project preview cards** with message counts and file status
 - **Export functionality** to download projects
 - **Deploy capabilities** for production deployment
+
+### 🐙 **GitHub Integration**
+- **OAuth authentication** for secure GitHub access
+- **Push to GitHub** directly from the workspace
+- **Repository configuration** (public/private, custom naming)
+- **Initial commit** with workspace code
+- **Seamless version control** integration
 
 ### 🎨 **Modern User Interface**
 - **Dark theme** with gradient animations
 - **Responsive design** across all devices
 - **Intuitive navigation** between code and preview
 - **Professional styling** with Tailwind CSS 4.0
+- **Back to home** button for easy navigation from workspace
+- **Animated gradient backgrounds** for immersive experience
 
 ---
 
@@ -88,12 +104,18 @@ Simply describe what you want to build, and Astra AI handles the rest — from c
 
 ### **AI & Generation**
 - **Google Gemini API** - Advanced language model for code generation
+- **Prompt Enhancement API** - AI-powered prompt optimization
 - **Axios** - HTTP client for API communication
 - **Custom prompts** - Specialized prompt engineering for code generation
 
 ### **Authentication & Payments**
 - **@react-oauth/google** - Google OAuth 2.0 integration
+- **GitHub OAuth** - GitHub authentication for version control
 - **PayPal SDK** - Payment processing integration
+
+### **Version Control**
+- **GitHub API** - Repository creation and code pushing
+- **Octokit** - GitHub REST API client
 
 ### **Utilities**
 - **UUID** - Unique identifier generation
@@ -110,6 +132,7 @@ Simply describe what you want to build, and Astra AI handles the rest — from c
 Node.js 20.x or higher
 npm/yarn/pnpm package manager
 Google Cloud Console project (for OAuth)
+GitHub OAuth App (for GitHub integration)
 Google AI Studio account (for Gemini API)
 Convex account
 ```
@@ -144,11 +167,25 @@ GOOGLE_GEMINI_API_KEY=your_gemini_api_key_here
 # Google OAuth
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_oauth_client_id
 
+# GitHub OAuth
+NEXT_PUBLIC_GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+
 # PayPal (Optional - for payments)
 NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id
 ```
 
-### 4. Initialize Convex Backend
+### 4. Setup GitHub OAuth App
+
+1. Go to [GitHub Developer Settings](https://github.com/settings/developers)
+2. Click "New OAuth App"
+3. Fill in the details:
+   - **Application name**: Astra AI
+   - **Homepage URL**: `http://localhost:3000`
+   - **Authorization callback URL**: `http://localhost:3000/api/auth/github/callback`
+4. Copy the Client ID and Client Secret to your `.env.local`
+
+### 5. Initialize Convex Backend
 
 ```bash
 # Login to Convex
@@ -163,7 +200,7 @@ This will:
 - Set up real-time subscriptions
 - Deploy backend functions
 
-### 5. Start Development Server
+### 6. Start Development Server
 
 ```bash
 npm run dev
@@ -171,7 +208,7 @@ npm run dev
 
 Visit `http://localhost:3000` to see Astra AI in action.
 
-### 6. Build for Production
+### 7. Build for Production
 
 ```bash
 npm run build
@@ -186,6 +223,7 @@ npm start
 
 1. **🏠 Landing Page**
    - View the hero section with animated gradients
+   - See your previous workspaces (if logged in)
    - Explore suggested prompts for inspiration
    - Enter your app idea in the textarea
 
@@ -194,18 +232,31 @@ npm start
    - Authenticate using Google OAuth
    - Your profile appears in the header
 
-3. **⚡ Workspace Creation**
-   - Submit your prompt (e.g., "Build a todo app with dark mode")
+3. **✨ Prompt Enhancement**
+   - Type your initial idea
+   - Click the **Wand icon** (✨) to enhance your prompt
+   - AI will optimize your prompt for better code generation
+   - Review the enhanced prompt and generate
+
+4. **⚡ Workspace Creation**
+   - Submit your prompt (enhanced or original)
    - Astra AI creates a dedicated workspace
    - Automatically redirected to `/workspace/[id]`
 
-4. **💻 Development Environment**
+5. **💻 Development Environment**
    - **Code Tab**: View and edit generated files
    - **Preview Tab**: See live application
    - **File Explorer**: Navigate between files
    - **Chat Panel**: Refine with conversational prompts
+   - **Back to Home**: Navigate back to see all projects
 
-5. **🎨 Iterative Refinement**
+6. **📂 Access Previous Workspaces**
+   - Return to home page
+   - Scroll to "Your Recent Projects" section
+   - Click any workspace card to continue working
+   - See message counts and last modified time
+
+7. **🎨 Iterative Refinement**
    ```
    User: "Add a delete button to each todo item"
    AI: [Updates code with delete functionality]
@@ -217,7 +268,14 @@ npm start
    AI: [Implements state persistence]
    ```
 
-6. **📤 Export & Deploy**
+8. **🐙 Push to GitHub**
+   - Click "Push to GitHub" button in workspace
+   - First time: Authenticate with GitHub OAuth
+   - Configure repository name and visibility
+   - Click "Push to GitHub" to create repo and commit code
+   - Your project is now on GitHub!
+
+9. **📤 Export & Deploy**
    - Click "Export" to download project as ZIP
    - Click "Deploy" to push to production (feature in development)
 
@@ -253,6 +311,14 @@ npm start
 ✨ "Create a landing page with hero and CTA sections"
 ```
 
+### Using Prompt Enhancement
+```
+Before: "make a todo app"
+After Enhancement: "Create a modern, responsive todo application with 
+add/delete functionality, priority levels, dark mode toggle, and local 
+storage persistence. Include smooth animations and a clean UI."
+```
+
 ---
 
 ## 🏗️ Architecture Overview
@@ -263,7 +329,11 @@ astra-ai/
 ├── app/                          # Next.js 15 App Router
 │   ├── api/                      # API routes
 │   │   ├── ai-chat/              # Chat AI endpoint
-│   │   └── gen-ai-code/          # Code generation endpoint
+│   │   ├── gen-ai-code/          # Code generation endpoint
+│   │   ├── enhance-prompt/       # Prompt enhancement endpoint
+│   │   └── auth/
+│   │       └── github/
+│   │           └── callback/     # GitHub OAuth callback
 │   ├── workspace/[id]/           # Dynamic workspace routes
 │   └── page.jsx                  # Homepage
 ├── components/
@@ -271,15 +341,16 @@ astra-ai/
 │   │   ├── ChatView.jsx          # AI chat interface
 │   │   ├── CodeView.jsx          # Code editor & preview
 │   │   ├── Header.jsx            # Navigation header
-│   │   └── Hero.jsx              # Landing page hero
+│   │   ├── Hero.jsx              # Landing page hero
+│   │   └── SignInDialog.jsx      # Authentication dialog
 │   └── ui/                       # shadcn/ui components
 ├── context/                      # React Context providers
-│   ├── ActionContext.jsx         # Export/deploy actions
+│   ├── ActionContext.jsx         # Export/deploy/GitHub actions
 │   ├── MessagesContext.jsx       # Chat message state
 │   └── UserDetailContext.jsx     # User authentication state
 ├── convex/                       # Convex backend
 │   ├── schema.ts                 # Database schema
-│   ├── workspace.ts              # Workspace mutations
+│   ├── workspace.ts              # Workspace mutations & queries
 │   └── users.ts                  # User management
 ├── data/                         # Static configuration
 │   ├── Colors.js                 # Theme colors
@@ -292,29 +363,39 @@ astra-ai/
 
 ```mermaid
 graph TB
-    A[User Input] --> B[Hero Component]
-    B --> C{Authenticated?}
-    C -->|No| D[Sign In Dialog]
-    C -->|Yes| E[Create Workspace]
-    E --> F[Convex Backend]
-    F --> G[Workspace ID Generated]
-    G --> H[Navigate to /workspace/ID]
-    H --> I[CodeView Component]
-    I --> J[Generate AI Code]
-    J --> K[Gemini API]
-    K --> L[Return Files]
-    L --> M[Update Convex]
-    M --> N[Render in Sandpack]
-    N --> O[User Refines via Chat]
-    O --> J
+    A[User Input] --> B{Enhance Prompt?}
+    B -->|Yes| C[Prompt Enhancement API]
+    C --> D[Enhanced Prompt]
+    B -->|No| D
+    D --> E{Authenticated?}
+    E -->|No| F[Sign In Dialog]
+    E -->|Yes| G[Create Workspace]
+    G --> H[Convex Backend]
+    H --> I[Workspace ID Generated]
+    I --> J[Navigate to /workspace/ID]
+    J --> K[CodeView Component]
+    K --> L[Generate AI Code]
+    L --> M[Gemini API]
+    M --> N[Return Files]
+    N --> O[Update Convex]
+    O --> P[Render in Sandpack]
+    P --> Q{User Action?}
+    Q -->|Refine| L
+    Q -->|Push to GitHub| R[GitHub Integration]
+    Q -->|Export| S[Download ZIP]
+    Q -->|Back to Home| T[View All Workspaces]
 ```
 
 ### Key Components
 
 **Hero.jsx** - Landing page entry point
 - Handles initial prompt submission
+- Prompt enhancement with AI
 - Creates workspace via Convex mutation
+- Displays previous workspaces with preview cards
 - Manages authentication state
+- Relative time formatting for workspace cards
+- Navigation to existing workspaces
 
 **CodeView.jsx** - Main development environment
 - Integrates Sandpack for code editing
@@ -330,8 +411,19 @@ graph TB
 
 **Header.jsx** - Navigation and user management
 - Google OAuth integration
+- GitHub OAuth integration
 - Export/Deploy action triggers
+- Push to GitHub functionality
 - User profile dropdown
+- Back to home button (workspace only)
+- Context-aware button visibility
+
+**ActionContext.jsx** - Action management
+- Handles export functionality
+- Manages deployment process
+- GitHub push integration
+- Repository creation and code upload
+- Loading states and error handling
 
 ---
 
@@ -358,6 +450,35 @@ export default defineSchema({
 });
 ```
 
+### API Endpoints
+
+#### Prompt Enhancement
+```javascript
+// app/api/enhance-prompt/route.js
+POST /api/enhance-prompt
+Body: { prompt: string }
+Response: { enhancedPrompt: string }
+```
+
+#### GitHub OAuth Callback
+```javascript
+// app/api/auth/github/callback/route.js
+GET /api/auth/github/callback?code=xxx
+Sets github_token cookie
+Redirects to home
+```
+
+#### Push to GitHub
+```javascript
+// Used in ActionContext
+handleAction("pushToGithub", {
+  repoName: string,
+  isPrivate: boolean,
+  commitMessage: string,
+  workspaceCode: object
+})
+```
+
 ### Sandpack Dependencies
 ```javascript
 // From Lookup.js
@@ -374,6 +495,7 @@ DEPENDANCY: {
 // From Prompt.js
 CODE_GEN_PROMPT: "Generate React components with hooks..."
 CHAT_PROMPT: "Provide helpful development guidance..."
+ENHANCE_PROMPT: "Enhance and optimize this prompt..."
 ```
 
 ---
@@ -396,6 +518,7 @@ export default {
 export default {
   CODE_GEN_PROMPT: "Your custom system prompt...",
   CHAT_PROMPT: "Your custom chat instructions...",
+  ENHANCE_PROMPT: "Your custom enhancement logic...",
 }
 ```
 
@@ -403,6 +526,16 @@ export default {
 ```jsx
 // Modify Tailwind classes or update theme
 // components use inline styles with Colors.js constants
+```
+
+### Customizing Workspace Cards
+```jsx
+// Hero.jsx - Modify workspace card rendering
+<div className="group relative bg-gradient-to-br...">
+  {/* Customize preview section */}
+  {/* Customize metadata display */}
+  {/* Customize hover effects */}
+</div>
 ```
 
 ---
@@ -418,6 +551,10 @@ We welcome contributions! Here's how to get started:
    ```
 3. **Make your changes**
 4. **Test thoroughly**
+   - Test prompt enhancement
+   - Test GitHub push functionality
+   - Test workspace history
+   - Test navigation flows
 5. **Commit with clear messages**
    ```bash
    git commit -m "feat: add amazing feature"
@@ -433,38 +570,51 @@ We welcome contributions! Here's how to get started:
 - Add comments for complex logic
 - Test across different prompts
 - Update documentation as needed
+- Ensure OAuth flows work correctly
+- Test workspace persistence
 
 ---
 
 ## 🐛 Known Issues & Limitations
 
 - Token system requires manual refresh
-- Export feature downloads code only (no dependencies)
+- Export feature downloads code only (no dependencies automatically installed)
 - Deploy functionality in development
 - Large projects may hit token limits
 - Sandpack has limited library support
+- GitHub push requires OAuth authentication each session (no refresh token)
+- Workspace cards limited to 6 on home page (view all for more)
 
 ---
 
 ## 🗺️ Roadmap
 
-### Phase 1 (Current)
+### Phase 1 (Current) ✅
 - ✅ Core code generation
 - ✅ Real-time workspace
 - ✅ AI chat refinement
 - ✅ User authentication
+- ✅ Prompt enhancement
+- ✅ GitHub integration
+- ✅ Previous workspace history
 
-### Phase 2 (In Progress)
+### Phase 2 (In Progress) 🔄
 - 🔄 Token purchase system
 - 🔄 Project templates
 - 🔄 Code export improvements
 - 🔄 Deploy to production
+- 🔄 GitHub refresh token support
+- 🔄 Workspace search and filtering
 
-### Phase 3 (Planned)
+### Phase 3 (Planned) 📋
 - 📋 Collaborative editing
-- 📋 Version control
+- 📋 Version control history
 - 📋 Custom AI models
 - 📋 Advanced analytics
+- 📋 GitLab/Bitbucket integration
+- 📋 Workspace folders/organization
+- 📋 Code diff visualization
+- 📋 AI-powered code review
 
 ---
 
@@ -494,9 +644,11 @@ Special thanks to the amazing open-source community:
 - **[Next.js Team](https://nextjs.org/)** - For the incredible React framework
 - **[Convex](https://www.convex.dev/)** - For real-time backend magic
 - **[Google AI](https://ai.google.dev/)** - For Gemini API access
+- **[GitHub](https://github.com/)** - For OAuth and API integration
 - **[CodeSandbox](https://codesandbox.io/)** - For Sandpack playground
 - **[shadcn](https://ui.shadcn.com/)** - For beautiful UI components
 - **[Tailwind Labs](https://tailwindcss.com/)** - For utility-first CSS
+- **[Lucide](https://lucide.dev/)** - For beautiful icons
 
 ---
 
@@ -507,6 +659,27 @@ If you encounter issues or have questions:
 1. Check existing [GitHub Issues](https://github.com/priyyannshhu/astra-ai/issues)
 2. Open a new issue with detailed information
 3. Provide reproduction steps and screenshots
+4. For GitHub integration issues, check OAuth configuration
+
+---
+
+## 🔐 Security
+
+- All authentication uses OAuth 2.0
+- GitHub tokens are stored securely in HTTP-only cookies
+- API keys are never exposed to the client
+- User data is encrypted in transit and at rest
+- Regular security audits recommended
+
+---
+
+## 🚀 Performance Tips
+
+- Use prompt enhancement for better code generation
+- Keep workspaces organized by project type
+- Export projects regularly as backups
+- Use GitHub push for version control
+- Clear old workspaces to improve load times
 
 ---
 
@@ -521,5 +694,8 @@ If you encounter issues or have questions:
 ---
 
 **[Live Demo](https://astra-aii.vercel.app)** • **[Documentation](#)** • **[Changelog](#)**
+
+[![GitHub stars](https://img.shields.io/github/stars/priyyannshhu/astra-ai?style=social)](https://github.com/priyyannshhu/astra-ai)
+[![GitHub forks](https://img.shields.io/github/forks/priyyannshhu/astra-ai?style=social)](https://github.com/priyyannshhu/astra-ai)
 
 </div>
