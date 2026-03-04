@@ -24,6 +24,8 @@ export default function Dashboard() {
   const { userDetail, isLoadingUser } = useContext(UserDetailContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("active");
+  const [sortBy, setSortBy] = useState("recent");
+  const [selectedProject, setSelectedProject] = useState(null);
 
   // Fetch user's projects
   const projects = useQuery(
@@ -53,9 +55,19 @@ export default function Dashboard() {
     );
   }
 
-  const filteredProjects = projects?.filter((project) =>
+  // Filter and sort projects
+  let filteredProjects = projects?.filter((project) =>
     project.name.toLowerCase().includes(searchQuery.toLowerCase())
   ) || [];
+
+  // Apply sorting
+  if (sortBy === "recent") {
+    filteredProjects = [...filteredProjects].sort((a, b) => b.createdAt - a.createdAt);
+  } else if (sortBy === "accessed") {
+    filteredProjects = [...filteredProjects].sort((a, b) => (b.lastAccessedAt || 0) - (a.lastAccessedAt || 0));
+  } else if (sortBy === "name") {
+    filteredProjects = [...filteredProjects].sort((a, b) => a.name.localeCompare(b.name));
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-900 to-slate-950">
@@ -81,8 +93,8 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-12">
         {/* Search and Filter Bar */}
-        <div className="mb-8 flex items-center gap-4">
-          <div className="flex-1 relative">
+        <div className="mb-8 flex items-center gap-4 flex-wrap">
+          <div className="flex-1 relative min-w-[200px]">
             <Search
               size={18}
               className="absolute left-3 top-3 text-slate-400"
@@ -105,6 +117,17 @@ export default function Dashboard() {
               <option value="active">Active</option>
               <option value="archived">Archived</option>
               <option value="all">All</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-2 bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="bg-transparent text-white text-sm focus:outline-none"
+            >
+              <option value="recent">Most Recent</option>
+              <option value="accessed">Last Accessed</option>
+              <option value="name">Name (A-Z)</option>
             </select>
           </div>
         </div>
