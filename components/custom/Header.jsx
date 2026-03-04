@@ -96,7 +96,7 @@ function Header() {
 
   return (
     <>
-      <div className="p-4 flex justify-between items-center">
+      <div className="p-4 flex justify-between items-center backdrop-blur-md bg-slate-950/50 border-b border-slate-800/50">
         {/* Logo + Text - Hide on workspace */}
         {!isWorkspace && (
           <Link href="/" className="flex items-center gap-3 cursor-pointer">
@@ -199,15 +199,35 @@ function Header() {
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={userDetail?.picture || "/default-avatar.png"}
+                      alt={userDetail?.name}
+                      width={32}
+                      height={32}
+                      className="rounded-full"
+                    />
+                    <div>
+                      <p className="text-sm font-semibold">{userDetail?.name}</p>
+                      <p className="text-xs text-slate-400">{userDetail?.email}</p>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem disabled>
-                  {userDetail?.email}
+                <DropdownMenuItem asChild>
+                  <Link href="/settings/profile">Profile Settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard">My Projects</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/settings/account">Account Settings</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={handleLogout}
-                  className="text-red-500"
+                  className="text-red-500 focus:text-red-600"
                 >
                   Log out
                 </DropdownMenuItem>

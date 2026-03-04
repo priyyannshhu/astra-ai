@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import Header from "../components/custom/Header";
+import Footer from "../components/custom/Footer";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { MessagesContext } from "@/context/MessagesContext";
 import { UserDetailContext } from "@/context/UserDetailContext";
@@ -56,7 +57,10 @@ const Provider = ({ children }) => {
                 disableTransitionOnChange
               >
                 <Header />
-                {children}
+                <main className="min-h-screen">
+                  {children}
+                </main>
+                <Footer />
               </NextThemesProvider>
             </ActionProvider>
           </MessagesContext.Provider>

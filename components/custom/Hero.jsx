@@ -7,6 +7,7 @@ import { api } from "@/convex/_generated/api";
 import { MessagesContext } from "@/context/MessagesContext";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import SignInDialog from "@/components/custom/SignInDialog";
+import FeaturesShowcase from "@/components/custom/FeaturesShowcase";
 import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 import Lookup from "@/data/Lookup";
 import Colors from "@/data/Colors";
@@ -178,26 +179,27 @@ function Hero() {
         <p className="text-gray-100 font-medium">{Lookup.HERO_DESC}</p>
 
         <div
-          className="p-5 border rounded-xl max-w-xl w-full mt-3"
+          className="p-5 border rounded-xl max-w-2xl w-full mt-3 shadow-lg shadow-blue-500/10"
           style={{ backgroundColor: Colors.BACKGROUND }}
         >
-          <div className="flex gap-2">
-            <textarea
-              value={userInput}
-              placeholder={Lookup.INPUT_PLACEHOLDER}
-              onChange={(e) => setUserInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  if (
-                    userInput?.trim() &&
-                    !isLoading &&
-                    !isNavigating &&
-                    !isEnhancing
-                  ) {
-                    onGenerate(userInput);
+          <div className="flex gap-2 flex-col">
+            <div className="flex gap-2">
+              <textarea
+                value={userInput}
+                placeholder={Lookup.INPUT_PLACEHOLDER}
+                onChange={(e) => setUserInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    if (
+                      userInput?.trim() &&
+                      !isLoading &&
+                      !isNavigating &&
+                      !isEnhancing
+                    ) {
+                      onGenerate(userInput);
+                    }
                   }
-                }
               }}
               spellCheck={false}
               className="outline-none bg-transparent w-full h-32 max-h-56 resize-none"
@@ -246,14 +248,31 @@ function Hero() {
           </div>
         </div>
 
-        <div className="flex mt-5 flex-wrap max-w-2xl items-center justify-center gap-3">
+        {/* Prompt Enhancement Tips */}
+        <div className="mt-6 max-w-2xl w-full">
+          <p className="text-xs text-slate-400 text-center mb-3">
+            💡 Tip: Use the wand icon to enhance your prompt with AI for better results
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-slate-800/30 border border-slate-700 rounded-lg p-3 text-xs text-slate-300">
+              <p className="font-semibold text-slate-200 mb-1">Be Specific</p>
+              <p>Include tech stack, colors, and specific features you want</p>
+            </div>
+            <div className="bg-slate-800/30 border border-slate-700 rounded-lg p-3 text-xs text-slate-300">
+              <p className="font-semibold text-slate-200 mb-1">Use Examples</p>
+              <p>Mention similar apps or designs you like for reference</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex mt-6 flex-wrap max-w-2xl items-center justify-center gap-3">
           {Lookup?.SUGGESTIONS.map((s, index) => (
             <h2
               key={index}
               onClick={() =>
                 !isLoading && !isNavigating && !isEnhancing && onGenerate(s)
               }
-              className="p-1 px-2 border rounded-full text-xs text-gray-400 hover:text-white cursor-pointer transition-colors"
+              className="p-1 px-2 border rounded-full text-xs text-gray-400 hover:text-white cursor-pointer transition-colors hover:border-blue-400"
             >
               {s}
             </h2>
@@ -357,26 +376,13 @@ function Hero() {
         )}
       </div>
 
+      {/* Features Showcase */}
+      <FeaturesShowcase />
+
       <SignInDialog
         openDialog={openDialog}
         closeDialog={(v) => setOpenDialog(v)}
       />
-
-      {/* Footer */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 flex justify-between items-center text-xs text-gray-400">
-        <span>© Copyright Astra AI</span>
-        <span>
-          Created by{" "}
-          <a
-            href="https://github.com/priyyannshhu"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-400 hover:text-blue-300 transition-colors"
-          >
-            Priyanshu Vishwakarma
-          </a>
-        </span>
-      </div>
     </>
   );
 }
