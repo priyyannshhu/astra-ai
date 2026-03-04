@@ -235,8 +235,12 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    font-family: var(--font-manrope), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-manrope), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 }
 

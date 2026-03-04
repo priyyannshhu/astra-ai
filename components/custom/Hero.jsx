@@ -165,7 +165,7 @@ function Hero() {
 
       {/* Hero Content */}
       <div className="flex flex-col items-center mt-24 xl:mt-36 gap-2 px-4">
-        <h2 className="font-bold text-4xl text-center">
+        <h2 className="font-bold text-4xl text-center font-manrope">
           Turn your{" "}
           <span className="font-['Press_Start_2P'] bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-sky-300 animate-gradient">
             ideas
@@ -176,7 +176,7 @@ function Hero() {
           </span>{" "}
           instantly
         </h2>
-        <p className="text-gray-100 font-medium">{Lookup.HERO_DESC}</p>
+        <p className="text-gray-100 font-medium font-manrope">{Lookup.HERO_DESC}</p>
 
         <div
           className="p-5 border rounded-xl max-w-2xl w-full mt-3 shadow-lg shadow-blue-500/10"
@@ -250,15 +250,15 @@ function Hero() {
 
         {/* Prompt Enhancement Tips */}
         <div className="mt-6 max-w-2xl w-full">
-          <p className="text-xs text-slate-400 text-center mb-3">
+          <p className="text-xs text-slate-400 text-center mb-3 font-manrope">
             💡 Tip: Use the wand icon to enhance your prompt with AI for better results
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="bg-slate-800/30 border border-slate-700 rounded-lg p-3 text-xs text-slate-300">
+            <div className="bg-slate-800/30 border border-slate-700 rounded-lg p-3 text-xs text-slate-300 font-manrope">
               <p className="font-semibold text-slate-200 mb-1">Be Specific</p>
               <p>Include tech stack, colors, and specific features you want</p>
             </div>
-            <div className="bg-slate-800/30 border border-slate-700 rounded-lg p-3 text-xs text-slate-300">
+            <div className="bg-slate-800/30 border border-slate-700 rounded-lg p-3 text-xs text-slate-300 font-manrope">
               <p className="font-semibold text-slate-200 mb-1">Use Examples</p>
               <p>Mention similar apps or designs you like for reference</p>
             </div>
@@ -272,7 +272,7 @@ function Hero() {
               onClick={() =>
                 !isLoading && !isNavigating && !isEnhancing && onGenerate(s)
               }
-              className="p-1 px-2 border rounded-full text-xs text-gray-400 hover:text-white cursor-pointer transition-colors hover:border-blue-400"
+              className="p-1 px-2 border rounded-full text-xs text-gray-400 hover:text-white cursor-pointer transition-colors hover:border-blue-400 font-manrope"
             >
               {s}
             </h2>
@@ -284,7 +284,7 @@ function Hero() {
           <div className="w-full max-w-6xl mt-12 mb-20">
             <div className="flex items-center gap-2 mb-6">
               <Code2 className="h-6 w-6 text-purple-400" />
-              <h3 className="text-2xl font-bold text-white">
+              <h3 className="text-2xl font-bold text-white font-manrope">
                 Your Recent Projects
               </h3>
             </div>
